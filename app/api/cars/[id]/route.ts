@@ -6,32 +6,29 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const carId = params.id
+    const id = params.id
     
-    if (!carId) {
-      return NextResponse.json(
-        { error: 'Car ID is required' }, 
-        { status: 400 }
-      )
-    }
-    
-    // Fetch car details from database
+    // Fetch car by ID
     const car = await prisma.car.findUnique({
-      where: { id: carId }
+      where: {
+        id
+      }
     })
     
+    // Return 404 if car not found
     if (!car) {
       return NextResponse.json(
-        { error: 'Car not found' }, 
+        { error: 'Car not found' },
         { status: 404 }
       )
     }
     
+    // Return car data
     return NextResponse.json({ car })
   } catch (error) {
     console.error('Error fetching car details:', error)
     return NextResponse.json(
-      { error: 'An error occurred while fetching car details' }, 
+      { error: 'An error occurred while fetching car details' },
       { status: 500 }
     )
   }

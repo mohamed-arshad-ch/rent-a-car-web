@@ -126,6 +126,7 @@ export default function CarManagement() {
   const [editingCar, setEditingCar] = useState<any>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [carToDelete, setCarToDelete] = useState<any>(null)
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({})
 
   // State for filters
   const [searchQuery, setSearchQuery] = useState("")
@@ -335,29 +336,55 @@ export default function CarManagement() {
       return
     }
     
-    if (!formData.make || !formData.model || !formData.name) {
-      alert("Please fill in all required fields")
+    // Validate form
+    const errors: {[key: string]: string} = {}
+    
+    if (!formData.name.trim()) {
+      errors.name = "Car name is required"
+    }
+    
+    if (!formData.make.trim()) {
+      errors.make = "Make/Brand is required"
+    }
+    
+    if (!formData.model.trim()) {
+      errors.model = "Model is required"
+    }
+    
+    if (!formData.dailyRate || formData.dailyRate <= 0) {
+      errors.dailyRate = "Daily rate must be greater than 0"
+    }
+    
+    if (!formData.color.trim()) {
+      errors.color = "Color is required"
+    }
+    
+    // If we have errors, show them and stop submission
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors)
       return
     }
     
+    // Clear any previous errors
+    setFormErrors({})
     setIsLoading(true)
     
     try {
       // Prepare data for API
       const carData = {
-        name: formData.name || `${formData.make} ${formData.model}`,
-        brand: formData.make,
-        model: formData.model,
+        name: formData.name.trim() || `${formData.make} ${formData.model}`,
+        brand: formData.make.trim(),
+        model: formData.model.trim(),
         year: formData.year,
         type: formData.category,
         pricePerDay: formData.dailyRate,
-        color: formData.color,
+        color: formData.color.trim(),
         transmission: formData.transmission,
         fuelType: formData.fuelType,
         seats: formData.seats,
         status: formData.status,
         image: formData.image,
-        description: formData.description,
+        description: formData.description.trim(),
       }
       
       // Submit to API
@@ -447,20 +474,9 @@ export default function CarManagement() {
   // Continue with the rest of the component (UI for displaying cars and filters)
   // ... existing code ...
 
-  // Action button for the header
-  const actionButton = (
-    <button
-      onClick={handleAddNewCar}
-      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
-    >
-      <Plus className="h-4 w-4 mr-2" />
-      Add New Car
-    </button>
-  )
-
   return (
     <>
-      <AdminHeader title="Car Management" actionButton={actionButton} />
+      <AdminHeader title="Car Management" />
       <main className="flex-1 overflow-auto pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Search and Filter Section */}
@@ -535,28 +551,49 @@ export default function CarManagement() {
                 </div>
               </div>
 
-              {/* View Mode Toggle (Desktop only) */}
+              {/* Add New Car Button (Mobile: below filters) */}
+              <div className="mt-4 md:hidden">
+                <button
+                  onClick={handleAddNewCar}
+                  className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Car
+                </button>
+              </div>
+
+              {/* View Mode Toggle and Add New Car (Desktop) */}
               <div className="mt-4 flex justify-between items-center">
                 <div className="text-sm text-gray-500">
                   {cars.length} {cars.length === 1 ? "car" : "cars"} found
                 </div>
-                <div className="hidden md:flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
+                  {/* Add New Car Button (Desktop: next to view toggle) */}
                   <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md ${
-                      viewMode === "list" ? "bg-gray-200 text-gray-800" : "text-gray-500 hover:bg-gray-100"
-                    }`}
+                    onClick={handleAddNewCar}
+                    className="hidden md:inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
                   >
-                    <List className="h-5 w-5" />
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add New Car
                   </button>
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md ${
-                      viewMode === "grid" ? "bg-gray-200 text-gray-800" : "text-gray-500 hover:bg-gray-100"
-                    }`}
-                  >
-                    <Grid className="h-5 w-5" />
-                  </button>
+                  <div className="hidden md:flex items-center space-x-2">
+                    <button
+                      onClick={() => setViewMode("list")}
+                      className={`p-2 rounded-md ${
+                        viewMode === "list" ? "bg-gray-200 text-gray-800" : "text-gray-500 hover:bg-gray-100"
+                      }`}
+                    >
+                      <List className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => setViewMode("grid")}
+                      className={`p-2 rounded-md ${
+                        viewMode === "grid" ? "bg-gray-200 text-gray-800" : "text-gray-500 hover:bg-gray-100"
+                      }`}
+                    >
+                      <Grid className="h-5 w-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -834,7 +871,8 @@ export default function CarManagement() {
                       {editingCar ? "Edit Car" : "Add New Car"}
                     </h3>
                     <div className="mt-4">
-                      <form onSubmit={handleSubmit}>
+                      <div className="text-sm text-gray-500 mb-3">Fields marked with <span className="text-red-500">*</span> are required</div>
+                      <form id="carForm" onSubmit={handleSubmit}>
                         {/* Image Upload */}
                         <div className="mb-4">
                           <label className="block text-sm font-medium text-gray-700 mb-2">Car Image</label>
@@ -906,7 +944,7 @@ export default function CarManagement() {
                           {/* Name */}
                           <div className="sm:col-span-2">
                             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                              Car Name
+                              Car Name <span className="text-red-500">*</span>
                             </label>
                             <input
                               type="text"
@@ -915,15 +953,17 @@ export default function CarManagement() {
                               value={formData.name}
                               onChange={handleInputChange}
                               placeholder="e.g. Tesla Model 3 Premium"
-                              required
-                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              className={`mt-1 block w-full border ${formErrors.name ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             />
+                            {formErrors.name && (
+                              <p className="mt-1 text-sm text-red-600">{formErrors.name}</p>
+                            )}
                           </div>
                         
                           {/* Make */}
                           <div>
                             <label htmlFor="make" className="block text-sm font-medium text-gray-700">
-                              Make/Brand
+                              Make/Brand <span className="text-red-500">*</span>
                             </label>
                             <input
                               type="text"
@@ -931,15 +971,17 @@ export default function CarManagement() {
                               id="make"
                               value={formData.make}
                               onChange={handleInputChange}
-                              required
-                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              className={`mt-1 block w-full border ${formErrors.make ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             />
+                            {formErrors.make && (
+                              <p className="mt-1 text-sm text-red-600">{formErrors.make}</p>
+                            )}
                           </div>
 
                           {/* Model */}
                           <div>
                             <label htmlFor="model" className="block text-sm font-medium text-gray-700">
-                              Model
+                              Model <span className="text-red-500">*</span>
                             </label>
                             <input
                               type="text"
@@ -947,9 +989,11 @@ export default function CarManagement() {
                               id="model"
                               value={formData.model}
                               onChange={handleInputChange}
-                              required
-                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              className={`mt-1 block w-full border ${formErrors.model ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             />
+                            {formErrors.model && (
+                              <p className="mt-1 text-sm text-red-600">{formErrors.model}</p>
+                            )}
                           </div>
 
                           {/* Year */}
@@ -998,7 +1042,7 @@ export default function CarManagement() {
                           {/* Color */}
                           <div>
                             <label htmlFor="color" className="block text-sm font-medium text-gray-700">
-                              Color
+                              Color <span className="text-red-500">*</span>
                             </label>
                             <input
                               type="text"
@@ -1006,8 +1050,11 @@ export default function CarManagement() {
                               id="color"
                               value={formData.color}
                               onChange={handleInputChange}
-                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              className={`mt-1 block w-full border ${formErrors.color ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             />
+                            {formErrors.color && (
+                              <p className="mt-1 text-sm text-red-600">{formErrors.color}</p>
+                            )}
                           </div>
 
                           {/* Transmission */}
@@ -1070,7 +1117,7 @@ export default function CarManagement() {
                           {/* Daily Rate */}
                           <div>
                             <label htmlFor="dailyRate" className="block text-sm font-medium text-gray-700">
-                              Daily Rate ($)
+                              Daily Rate ($) <span className="text-red-500">*</span>
                             </label>
                             <input
                               type="number"
@@ -1079,9 +1126,11 @@ export default function CarManagement() {
                               value={formData.dailyRate}
                               onChange={handleInputChange}
                               min="0"
-                              required
-                              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                              className={`mt-1 block w-full border ${formErrors.dailyRate ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             />
+                            {formErrors.dailyRate && (
+                              <p className="mt-1 text-sm text-red-600">{formErrors.dailyRate}</p>
+                            )}
                           </div>
 
                           {/* Status */}
@@ -1146,8 +1195,8 @@ export default function CarManagement() {
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                 <button
-                  type="button"
-                  onClick={handleSubmit}
+                  type="submit"
+                  form="carForm"
                   disabled={isLoading}
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50"
                 >
