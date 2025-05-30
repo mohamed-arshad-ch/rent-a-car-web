@@ -1,0 +1,61 @@
+/* Drivers page specific styles */
+
+/* Force light theme for all components */
+.admin-drivers-page {
+  @apply bg-white text-gray-900;
+  color-scheme: light;
+  
+  /* Make sure no dark theme is applied */
+  filter: none !important;
+}
+
+/* Ensure all dialog components are light */
+.admin-drivers-page .dialog,
+.admin-drivers-page [role="dialog"],
+.admin-drivers-page [data-state="open"] {
+  @apply bg-white text-gray-900;
+  background-color: white !important;
+  color: #111827 !important;
+}
+
+/* Card components */
+.admin-drivers-page .card {
+  @apply bg-white text-gray-900 border-gray-200;
+  background-color: white !important;
+}
+
+/* Dialog content */
+.admin-drivers-page .dialog-content,
+.admin-drivers-page [role="dialog"] > div {
+  @apply bg-white text-gray-900;
+  background-color: white !important;
+}
+
+/* Form elements */
+.admin-drivers-page input,
+.admin-drivers-page select,
+.admin-drivers-page textarea,
+.admin-drivers-page button {
+  @apply bg-white text-gray-900;
+  color-scheme: light;
+}
+
+/* Tabs */
+.admin-drivers-page .tabs-list,
+.admin-drivers-page .tabs-content {
+  @apply bg-white text-gray-900;
+  background-color: white !important;
+}
+
+/* Input fields */
+.admin-drivers-page .input {
+  @apply bg-white text-gray-900 border-gray-300;
+  background-color: white !important;
+}
+
+/* Light theme for modal forms */
+.light-theme-dialog[data-state="open"] > div,
+.light-theme-dialog[data-state="open"] > div > div {
+  @apply bg-white text-gray-900 !important;
+  background-color: white !important;
+} 

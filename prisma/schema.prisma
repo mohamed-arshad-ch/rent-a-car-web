@@ -55,6 +55,22 @@ model Car {
   bookings    Booking[]
 }
 
+model Driver {
+  id            String   @id @default(uuid())
+  name          String
+  nationality   String
+  licenseNumber String   @unique
+  age           Int
+  languages     String[]
+  pricePerDay   Decimal
+  pricePerWeek  Decimal?
+  pricePerMonth Decimal?
+  photo         String?
+  availability  Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
 model Booking {
   id          String   @id @default(uuid())
   startDate   DateTime

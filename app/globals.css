@@ -87,11 +87,61 @@ body {
     @apply bg-white border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent;
   }
 
+  /* Force light theme for dialogs, cards, and popups */
+  .dialog,
+  .dialog-content,
+  .dialog-header,
+  .dialog-footer,
+  .card,
+  .card-header,
+  .card-content,
+  .popover-content,
+  .dropdown-menu-content,
+  .select-content {
+    @apply bg-white text-gray-900 !important;
+    background-color: white !important;
+    color: #111827 !important;
+  }
+
+  /* Ensure all dialog elements have light theme */
+  [role="dialog"],
+  [data-state="open"] {
+    @apply bg-white text-gray-900 !important;
+    background-color: white !important;
+    color: #111827 !important;
+  }
+
   /* Fix for any dark background issues in inputs */
   .dark input, 
   .dark textarea, 
-  .dark select {
-    @apply bg-white text-gray-900;
+  .dark select,
+  .dark [role="dialog"],
+  .dark [data-state="open"],
+  .dark .dialog,
+  .dark .dialog-content,
+  .dark .card,
+  .dark .card-header,
+  .dark .card-content,
+  .dark .popover-content,
+  .dark .dropdown-menu-content,
+  .dark .tabs-content,
+  .dark .select-content {
+    @apply bg-white text-gray-900 !important;
     background-color: white !important;
+    color: #111827 !important;
+  }
+  
+  /* Make sure dialog backgrounds are light */
+  [data-state="open"] > div > div,
+  [role="dialog"] > div > div {
+    @apply bg-white text-gray-900 !important;
+    background-color: white !important;
+    color: #111827 !important;
+  }
+  
+  /* Admin pages and driver pages should always use light theme */
+  [class*="admin"],
+  [class*="drivers"] {
+    @apply bg-white text-gray-900 !important;
   }
 }

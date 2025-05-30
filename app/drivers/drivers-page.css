@@ -1,0 +1,54 @@
+/* Drivers page specific styles */
+
+/* Force light theme for all components */
+.drivers-page {
+  @apply bg-gray-50 text-gray-900;
+  color-scheme: light;
+  
+  /* Make sure no dark theme is applied */
+  filter: none !important;
+}
+
+/* Ensure all dialog components are light */
+.drivers-page .dialog,
+.drivers-page [role="dialog"],
+.drivers-page [data-state="open"] {
+  @apply bg-white text-gray-900;
+  background-color: white !important;
+  color: #111827 !important;
+}
+
+/* Card components */
+.drivers-page .card {
+  @apply bg-white text-gray-900 border-gray-200;
+  background-color: white !important;
+}
+
+/* Dialog content */
+.drivers-page .dialog-content,
+.drivers-page [role="dialog"] > div {
+  @apply bg-white text-gray-900;
+  background-color: white !important;
+}
+
+/* Form elements */
+.drivers-page input,
+.drivers-page select,
+.drivers-page textarea,
+.drivers-page button {
+  @apply bg-white text-gray-900;
+  color-scheme: light;
+}
+
+/* Input fields */
+.drivers-page .input {
+  @apply bg-white text-gray-900 border-gray-300;
+  background-color: white !important;
+}
+
+/* Light theme for modal forms */
+.light-theme-dialog[data-state="open"] > div,
+.light-theme-dialog[data-state="open"] > div > div {
+  @apply bg-white text-gray-900 !important;
+  background-color: white !important;
+} 

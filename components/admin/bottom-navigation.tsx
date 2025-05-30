@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Car, Users, Calendar } from "lucide-react"
+import { Home, Car, Users, Calendar, UserCog } from "lucide-react"
 
 export default function AdminBottomNavigation() {
   const pathname = usePathname()
@@ -32,6 +32,15 @@ export default function AdminBottomNavigation() {
           >
             <Car className="h-6 w-6" />
             <span className="text-xs mt-1">Cars</span>
+          </Link>
+          <Link
+            href="/admin/drivers"
+            className={`flex flex-col items-center py-3 px-5 ${
+              isActive("/admin/drivers") ? "text-blue-600" : "text-gray-500"
+            }`}
+          >
+            <UserCog className="h-6 w-6" />
+            <span className="text-xs mt-1">Drivers</span>
           </Link>
           <Link
             href="/admin/users"
